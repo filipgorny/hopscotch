@@ -215,7 +215,7 @@
      *
      * @private
      */
-    invokeEventCallbacks: function(evtType, stepCb) {
+    invokeEventCallbacks: function(evtType, stepCb, callback) {
       var cbArr = callbacks[evtType],
           callback,
           fn,
@@ -223,11 +223,15 @@
           len;
 
       if (stepCb) {
-        return this.invokeCallback(stepCb);
+        this.invokeCallback(stepCb);
       }
 
       for (i=0, len=cbArr.length; i<len; ++i) {
         this.invokeCallback(cbArr[i].cb);
+      }
+      
+      if (typeof callback != 'undefined') {
+      	callback.call();
       }
     },
 
@@ -491,7 +495,8 @@
     end:   [],
     show:  [],
     error: [],
-    close: []
+    close: [],
+    beforeshow: []
   };
 
   /**
@@ -1751,33 +1756,35 @@
           isLast,
           showBubble;
 
-      showBubble = function() {
-        bubble.show();
-        utils.invokeEventCallbacks('show', step.onShow);
-      };
-
-      // Update bubble for current step
-      currStepNum    = stepNum;
-
-      bubble.hide(false);
-
-      isLast = (stepNum === numTourSteps - 1);
-      bubble.render(step, stepNum, isLast, function(adjustScroll) {
-        // when done adjusting window scroll, call showBubble helper fn
-        if (adjustScroll) {
-          adjustWindowScroll(showBubble);
-        }
-        else {
-          showBubble();
-        }
-
-        // If we want to advance to next step when user clicks on target.
-        if (step.nextOnTargetClick) {
-          utils.addEvtListener(targetEl, 'click', targetClickNextFn);
-        }
+      utils.invokeEventCallbacks('beforeshow', step.onBeforeShow, function() {
+	      showBubble = function() {
+	      	bubble.show();
+	        utils.invokeEventCallbacks('show', step.onShow);
+	      };
+	
+	      // Update bubble for current step
+	      currStepNum    = stepNum;
+	
+	      bubble.hide(false);
+	
+	      isLast = (stepNum === numTourSteps - 1);
+	      bubble.render(step, stepNum, isLast, function(adjustScroll) {
+	        // when done adjusting window scroll, call showBubble helper fn
+	        if (adjustScroll) {
+	          adjustWindowScroll(showBubble);
+	        }
+	        else {
+	          showBubble();
+	        }
+	
+	        // If we want to advance to next step when user clicks on target.
+	        if (step.nextOnTargetClick) {
+	          utils.addEvtListener(targetEl, 'click', targetClickNextFn);
+	        }
+	      });
+	
+	      utils.setState(getOption('cookieName'), cookieVal, 1);
       });
-
-      utils.setState(getOption('cookieName'), cookieVal, 1);
     },
 
     /**
