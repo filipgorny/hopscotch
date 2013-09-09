@@ -6,7 +6,7 @@ Hopscotch is a framework to make it easy for developers to add product tours to 
 
 Features
 ========
-* Callbacks for tour events (e.g. onStart, onEnd, onShow, onNext, onPrev, onClose)
+* Callbacks for tour events (e.g. onStart, onEnd, onShow, onNext, onPrev, onClose, onBeforeShow)
 * Multi-page persistence using HTML5 sessionStorage using cookies as a fallback
 * I18N support
 * Lightweight single callouts
@@ -167,6 +167,8 @@ The comprehensive list of step options are listed below:
 * `onNext` [FUNCTION] - callback for when 'Next' button is clicked
 
 * `onShow` [FUNCTION] - callback for when step is first displayed
+
+* `onBeforeShow` [FUNCTION] - callback for when tour is about to display step
 
 * `onCTA` [FUNCTION] - callback for the optional call-to-action button
 
